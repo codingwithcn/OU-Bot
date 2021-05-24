@@ -6,4 +6,4 @@ OU-Bot stands for Online User Bot, it is suppose to be a mini implementation of 
 
 [Youtube Video Link](https://youtu.be/nLw9S6wYKEI)
 
-[Blog Post](http://codingwithcn.me/)
+[Blog Post](http://www.codingwithcn.me/view/blog/How_to_create_a_online_user_help_bot)
