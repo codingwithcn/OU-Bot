@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>My test page</title>
+  </head>
+  <body>
+    <style>
+      .chatdiv {
+        position: sticky;
+        top: 0;
+      }
+      .botm {
+        left: 0;
+      }
+      .userm {
+        right: 0;
+      }
+    </style>
+    <p>This is my page</p>
+    <div class='chatdiv' aria-label='off' id='chatdiv'>
+      <button class="chatseebutton" onclick='showchat()'>Help Bot</button>
+      <div class='chatcontents' id='chatcontents'></div>
+    </div>
+    <script>
+      var chat_div = document.getElementById('chatdiv')
+      var help_but_show = document.getElementById('chatseebutton')
+      var chatcontents = document.getElementById('chatcontents')
+      
+      function grab_chat_input(){
+        let chatp_input = document.getElementById('chatp_input')
+        let chat_qu = document.getElementById('chat_qu')
+        chat_qu.innerHTML = ''
+        if (chatp_input.length != 0){
+          let web_host = '/chat'
+          fetch(web_host, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: chapt_input.value
+            })
+          }).then(result => {
+            return result.json()
+          }).then(data => {
+            console.log(data)
+            chapt_input.value=''
+            for (let i=0; i < data['messages'].length; i++){
+              let mess = data['messages'][i]
+              let bot_mes = mess['Bot']
+              let user_mes = mess['User']
+
+              if (bot_mes != null){
+                let bot_div = document.createElement('div')
+                bot_div.innerHTML = 'Bot: '+ bot_mes
+                bot_div.className='botm'
+                chat_qu.appendChild(bot_div)
+              }
+              if (user_mes != null) {
+                let user_div = document.createElement('div')
+                user_div.innerHTML='You: '+user_mes
+                user_div.className = 'userm'
+                chat_qu.appendChild(user_div)
+              }
+            }
+          })
+        }
+      }
+
+      function showchat(){
+        let atr = chat_div.getAttribute('aria-label')
+        if (atr == 'off'){
+          chat_div.setAttribute("aria-label", "on");
+          let chat_bot_name = document.createElement('h3')
+          chat_bot_name.innerHTML = 'Your friendly hood bot'
+          chatcontents.appendChild(chat_bot_name)
+
+          let chat_qu = document.createElement('div')
+          chat_qu.className = 'chat_qu'
+          chat_qu.id='chat_qu'
+          let web_host='/get/mes'
+          fetch(web_host, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(result=>{
+            return result.json()
+          }).then(data => {
+            console.log(data)
+            for (let i=0; i < data['messages'].length; i++){
+              let mess = data['messages'][i]
+              let bot_mes = mess['Bot']
+              let user_mes = mess['User']
+
+              if (bot_mes != null){
+                let bot_div = document.createElement('div')
+                bot_div.innerHTML = 'Bot: '+ bot_mes
+                bot_div.className='botm'
+                chat_qu.appendChild(bot_div)
+              }
+              if (user_mes != null) {
+                let user_div = document.createElement('div')
+                user_div.innerHTML='You: '+user_mes
+                user_div.className = 'userm'
+                chat_qu.appendChild(user_div)
+              }
+            }
+          })
+
+          chatcontents.appendChild(chat_qu)
+
+          let chat_type_div = document.createElement('div')
+          chat_type_div.className= 'chat_type_div'
+
+          chapt_input =  document.createElement('input')
+          chapt_input.id= 'chatp_input'
+          chapt_input.addEventListener("keyup", function() {
+            if (event.code === 'Enter') {
+              grab_chat_input()
+            }
+          });
+          chat_type_div.appendChild(chapt_input)
+
+          let submitchat = document.createElement('button')
+          submitchat.addEventListener("click", function() {
+            grab_chat_input()
+          });
+          submitchat.innerHTML='Send'
+          chat_type_div.appendChild(submitchat)
+
+          chatcontents.appendChild(chat_type_div)
+        }else {
+          chat_div.setAttribute("aria-label", "off");
+          chatcontents.innerHTML = ''
+        }
+      }
+    </script>
+  </body>
+</html>
